@@ -88,6 +88,60 @@ Then:
 - Click **Add a layer**
 - Choose the one you just created
 
+
 ---
 
-Let me know if you want to validate the ZIP file, or want to automate this with a script.
+# Lambda function destination payload
+
+`Success`
+```json
+{
+  "version": "1.0",
+  "timestamp": "2025-04-21T15:22:05.123Z",
+  "requestContext": {
+    "requestId": "f71bfb77-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+    "functionArn": "arn:aws:lambda:REGION:ACCOUNT_ID:function:YourLambdaFunctionName",
+    "condition": "Success",
+    "approximateInvokeCount": 1
+  },
+  "requestPayload": {
+    // This is the event your Lambda originally received (e.g., the S3 event)
+  },
+  "responseContext": {
+    "statusCode": 200,
+    "executedVersion": "$LATEST",
+    "functionError": null
+  },
+  "responsePayload": {
+    "statusCode": 200,
+    "body": "{\"message\": \"Label detection and article generation complete\", \"article\": \"...\"}"
+  }
+}
+```
+
+`Failed`
+```json
+{
+  "version": "1.0",
+  "timestamp": "2025-04-21T15:22:05.123Z",
+  "requestContext": {
+    "requestId": "f71bfb77-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+    "functionArn": "arn:aws:lambda:REGION:ACCOUNT_ID:function:YourLambdaFunctionName",
+    "condition": "RetriesExhausted",
+    "approximateInvokeCount": 3
+  },
+  "requestPayload": {
+    // Same as before, the original event
+  },
+  "responseContext": {
+    "statusCode": 200,
+    "executedVersion": "$LATEST",
+    "functionError": "Handled" // or "Unhandled"
+  },
+  "responsePayload": {
+    "errorMessage": "Something went wrong",
+    "errorType": "ExceptionType",
+    "stackTrace": [ /* optional */ ]
+  }
+}
+```
